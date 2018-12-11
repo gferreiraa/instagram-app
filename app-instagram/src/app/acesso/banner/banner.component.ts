@@ -37,22 +37,15 @@ export class BannerComponent implements OnInit {
   }
 
   public logicaRotacao(): void {
-    // Auxilia na exibição da imagem seguinte
-    let idx: number;
 
-    // Ocultar imagens
-    for (let i = 0; i <= 4; i++) {
-      if (this.imagens[i].estado === 'visivel') {
-        this.imagens[i].estado = 'escondido';
-        idx = i === 4 ? 0 : i + 1;
-        break;
-      }
-    }
+    const i = this.imagens.findIndex( i => i.estado === 'visivel');
+    this.imagens[i].estado = 'escondido';
+    this.imagens[(i === this.imagens.length - 1 ) ? 0 : i + 1].estado = 'visivel';
 
-    // Exibir imagens
-    this.imagens[idx].estado = 'visivel';
-
-    setTimeout(() => this.logicaRotacao(), 4000);
+    setTimeout(() => {
+      this.logicaRotacao();
+    }, 3000);
 
   }
+
 }
