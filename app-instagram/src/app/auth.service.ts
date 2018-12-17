@@ -8,6 +8,12 @@ export class Autenticacao {
 
     firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(usuario.email, usuario.senha)
       .then( (response: any) => {
+        // Remover a senha do atributo do objeto usuário
+        delete usuario.senha;
+
+        // Registrando dados complementares no path
+        firebase.database().ref(`usuario_detalhe/${btoa(usuario.email)}`)
+          .set( usuario );
         console.log('Usuário Cadastrado', response);
       })
       .catch( (error: Error) => {
