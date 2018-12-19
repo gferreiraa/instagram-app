@@ -19,6 +19,11 @@ export class Autenticacao {
       .catch( (error: Error) => {
         console.log(error);
       });
-
+  }
+  public autenticar(email, senha): void {
+    console.log('Dados Recebidos por parametro', email, senha);
+    firebase.auth().signInWithEmailAndPassword(email, senha)
+      .then( (resposta: any) => console.log(resposta))
+      .catch( (error: Error) => console.log(error));
   }
 }
