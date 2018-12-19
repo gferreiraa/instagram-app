@@ -3,10 +3,10 @@ import * as firebase from 'firebase';
 
 export class Autenticacao {
   // Metodo para receber user model
-  public cadastrarUsuario(usuario: Usuario): void {
+  public cadastrarUsuario(usuario: Usuario): Promise<any> {
     console.log('Chegamos até aqui', usuario);
 
-    firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(usuario.email, usuario.senha)
+    return firebase.auth().createUserAndRetrieveDataWithEmailAndPassword(usuario.email, usuario.senha)
       .then( (response: any) => {
         // Remover a senha do atributo do objeto usuário
         delete usuario.senha;
