@@ -1,7 +1,14 @@
 import { Usuario } from './acesso/usuario,model';
 import * as firebase from 'firebase';
+import { Injectable } from '@angular/core';
 
+import { Routes } from '@angular/router';
+import { Router } from '@angular/router';
+@Injectable()
 export class Autenticacao {
+  token_id: string;
+
+  constructor(private router: Router) { }
   // Metodo para receber user model
   public cadastrarUsuario(usuario: Usuario): Promise<any> {
     console.log('Chegamos até aqui', usuario);
@@ -20,10 +27,16 @@ export class Autenticacao {
         console.log(error);
       });
   }
-  public autenticar(email, senha): void {
-    console.log('Dados Recebidos por parametro', email, senha);
+  public autenticar(email: string, senha: string): void {
     firebase.auth().signInWithEmailAndPassword(email, senha)
-      .then( (resposta: any) => console.log(resposta))
-      .catch( (error: Error) => console.log(error));
-  }
+        .then((resposta: any) => {
+            firebase.auth().currentUser.getIdToken()
+                .then((idToken: string) => {
+                    this.token_id = idToken
+                    localStorage.setItem('idToken', idToken);
+                    this.router.navigate(['/home']);
+                })
+        })
+        .catch((error: Error) => console.log(error));
+}
 }
