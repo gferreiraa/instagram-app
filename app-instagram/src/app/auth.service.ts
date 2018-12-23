@@ -43,7 +43,7 @@ export class Autenticacao {
 }
   public autenticado(): boolean {
     if (this.token_id === undefined && localStorage.getItem('idToken') != null) {
-      this.token_id = localStorage.getItem('idToken')
+      this.token_id = localStorage.getItem('idToken');
     }
     return this.token_id !== undefined;
   }
