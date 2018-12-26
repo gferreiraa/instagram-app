@@ -17,7 +17,7 @@ export class HomeComponent implements OnInit {
   }
 
   public sair(): void {
-    this.autenticacao.sair()
+    this.autenticacao.sair();
   }
 
 }
