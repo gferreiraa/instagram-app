@@ -18,3 +18,8 @@
     height: 32px;
     float: left;
 }
+
+.btn-logout {
+  margin-left: 25px;
+  text-decoration: none;
+}
