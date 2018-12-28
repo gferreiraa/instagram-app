@@ -34,4 +34,8 @@ export class IncluirPublicacaoComponent implements OnInit {
     });
   }
 
+  public preparaImagemUpload( evento: Event ): void {
+    console.log(evento);
+  }
+
 }
