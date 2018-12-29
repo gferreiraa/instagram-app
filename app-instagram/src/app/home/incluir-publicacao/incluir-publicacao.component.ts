@@ -1,3 +1,4 @@
+import { Progresso } from './../../progresso.service';
 import { FormGroup, FormControl } from '@angular/forms';
 import { Component, OnInit } from '@angular/core';
 
@@ -19,7 +20,8 @@ export class IncluirPublicacaoComponent implements OnInit {
   });
 
   constructor(
-    private bd: Bd
+    private bd: Bd,
+    private progresso: Progresso
   ) { }
 
   ngOnInit() {
@@ -34,6 +36,8 @@ export class IncluirPublicacaoComponent implements OnInit {
       titulo: this.formulario.value.titulo,
       imagem: this.imagem[0]
     });
+    console.log(this.progresso.status);
+    console.log(this.progresso.estado);
   }
 
   public preparaImagemUpload( evento: Event ): void {
