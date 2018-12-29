@@ -8,7 +8,20 @@ export class Bd {
 
     firebase.storage().ref()
       .child(`imagens/${nomeImagem}`)
-      .put(publicacao.imagem);
+      .put(publicacao.imagem)
+      .on(firebase.storage.TaskEvent.STATE_CHANGED,
+        // Upload Progress
+        (snapshot: any) => {
+           console.log('teste');
+        },
+        (error) => {
+          console.log(error);
+        },
+        () => {
+          console.log('Upload Completo');
+        }
+
+       );
 /*     firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
         .push( { titulo: publicacao.titulo } ); */
     // console.log('Chegamos até o serviço responsável pelo controle de dados')
