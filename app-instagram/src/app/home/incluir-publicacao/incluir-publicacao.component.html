@@ -12,20 +12,20 @@
         <div class="modal-body">
           <input
             type="file"
-            class="form-control"
+            class="form-control mb-2"
             accept="image/*"
             (change)="preparaImagemUpload($event)"
           />
           <input
             type="text"
             placeholder="Título da publicação"
-            class="form-control"
+            class="form-control mt-2 mb-2"
             formControlName="titulo"
           >
         </div>
         <div class="modal-footer">
           <button type="button" class="btn btn-secondary" data-dismiss="modal">Fechar</button>
-          <button type="submit" class="btn btn-primary">Publicar</button>
+          <button type="submit" class="btn btn-success">Publicar</button>
         </div>
       </form>
     </div>

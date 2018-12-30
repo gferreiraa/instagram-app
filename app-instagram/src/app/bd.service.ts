@@ -1,84 +1,98 @@
+import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 import { Progresso } from './progresso.service';
-import { Injectable } from '@angular/core';
-import { once } from 'cluster';
 
 @Injectable()
 export class Bd {
-  constructor (private progresso: Progresso) { }
 
+    constructor(private progresso: Progresso) { }
 
-  public publicar(publicacao: any): void {
+    public publicar(publicacao: any): void {
 
-    console.log(publicacao);
+        console.log(publicacao);
 
-    // tslint:disable-next-line:prefer-const
-    let nomeImagem = Date.now();
+        firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
+            .push( { titulo: publicacao.titulo } )
+            .then((resposta: any) => {
 
-    firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
-      .push( { titulo: publicacao.titulo } )
-      .then( (resposta: any) => {
-        let nomeImagem = resposta.key;
-            firebase.storage().ref()
-              .child(`imagens/${nomeImagem}`)
-              .put(publicacao.imagem)
-              .on(firebase.storage.TaskEvent.STATE_CHANGED,
-                // Upload Progress
-                (snapshot: any) => {
-                  this.progresso.status = 'andamento';
-                  this.progresso.estado = snapshot;
-                  // console.log('Snapshot capturado com sucesso', snapshot);
-                },
-                (error) => {
-                  this.progresso.status = 'erro';
-                 // console.log(error);
-                },
-                () => {
-                  this.progresso.status = 'concluido';
-                 // console.log('Upload Completo');
-                }
-               );
-      });
-}
-  public consultaPublicacoes(emailUsuario: string): Promise<any> {
+                let nomeImagem = resposta.key;
 
-    return new Promise( (resolve, reject) => {
+                firebase.storage().ref()
+                    .child(`imagens/${nomeImagem}`)
+                    .put(publicacao.imagem)
+                    .on(firebase.storage.TaskEvent.STATE_CHANGED,
+                        // a companhamento do progresso do upload
+                        (snapshot: any) => {
+                            this.progresso.status = 'andamento';
+                            this.progresso.estado = snapshot;
+                            // console.log('Snapshot capturado no on(): ', snapshot)
+                        },
+                        (error) => {
+                            this.progresso.status = 'erro';
+                            // console.log(error);;
+                        },
+                        () => {
+                            // finalização do processo
+                            this.progresso.status = 'concluido';
+                            // console.log('upload completo')
+                        }
+                    )
+            })
+    }
 
-      firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
-        .once('value')
-        .then((snapshot: any) => {
-          console.log(snapshot.val());
+    public consultaPublicacoes(emailUsuario: string): Promise<any> {
 
-          const publicacoes = [];
+        return new Promise((resolve, reject) => {
 
-          snapshot.forEach( (childSnapshot: any) => {
+            // consultar as publicações (database)
+            firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
+            .orderByKey()
+            .once('value')
+            .then((snapshot: any) => {
+                // console.log(snapshot.val())
 
-            const publicacao  = childSnapshot.val();
+                let publicacoes: Array<any> = [];
 
-            // consultar url da imagem
-            firebase.storage().ref()
-              .child(`imagens/${childSnapshot.key}`)
-              .getDownloadURL()
-              .then( (url: string) => {
-                console.log(url);
+                snapshot.forEach((childSnapshot: any) => {
 
-                publicacao.url_imagem = url;
+                    let publicacao = childSnapshot.val();
+                    publicacao.key = childSnapshot.key;
 
-                  // consultar nome de usuário
-                  firebase.database().ref(`usuario_detalhe/${btoa(emailUsuario)}`)
-                    .once('value')
-                    .then((snapshote) => {
-                      publicacao.nome_usuario = snapshote.val().nome_usuario;
+                    publicacoes.push(publicacao)
+                });
 
-                      publicacoes.push(publicacao);
-                    });
-              });
-          });
-          resolve(publicacoes);
+                // console.log(publicacoes)
+                // resolve(publicacoes)
+
+                return publicacoes.reverse();
+            })
+            .then((publicacoes: any) => {
+
+                publicacoes.forEach((publicacao) => {
+
+                    // consultar a url da imagem (storage)
+                    firebase.storage().ref()
+                        .child(`imagens/${publicacao.key}`)
+                        .getDownloadURL()
+                        .then((url: string) => {
+
+                            publicacao.url_imagem = url;
+
+                            // consultar o nome do usuário
+                            firebase.database().ref(`usuario_detalhe/${btoa(emailUsuario)}`)
+                                .once('value')
+                                .then((snapshot: any) => {
+
+                                    publicacao.nome_usuario = snapshot.val().nome_usuario;
+                                });
+                        });
+                });
+
+                resolve(publicacoes);
+
+            });
+
         });
-    });
 
-  }
-
-
+    }
 }
