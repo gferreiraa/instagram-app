@@ -16,7 +16,7 @@ juntamente com Firebase como banco de dados, simulando o Instagram no cenário w
  ```
  ng serve -o
  ```
-<i>A flag -o é para abrir automaticamente o browser após o subir o servidor</i>
+<i>A flag -o é para abrir automaticamente o browser após o subir o servidor.</i>
 
 
  Resultado:
