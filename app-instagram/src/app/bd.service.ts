@@ -11,30 +11,32 @@ export class Bd {
 
     console.log(publicacao);
 
-    const nomeImagem = Date.now();
+    // tslint:disable-next-line:prefer-const
+    let nomeImagem = Date.now();
 
-    firebase.storage().ref()
-      .child(`imagens/${nomeImagem}`)
-      .put(publicacao.imagem)
-      .on(firebase.storage.TaskEvent.STATE_CHANGED,
-        // Upload Progress
-        (snapshot: any) => {
-          this.progresso.status = 'andamento';
-          this.progresso.estado = snapshot;
-          // console.log('Snapshot capturado com sucesso', snapshot);
-        },
-        (error) => {
-          this.progresso.status = 'erro';
-         // console.log(error);
-        },
-        () => {
-          this.progresso.status = 'concluido';
-         // console.log('Upload Completo');
-        }
-
-       );
-/*     firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
-        .push( { titulo: publicacao.titulo } ); */
-    // console.log('Chegamos até o serviço responsável pelo controle de dados')
+    firebase.database().ref(`publicacoes/${btoa(publicacao.email)}`)
+      .push( { titulo: publicacao.titulo } )
+      .then( (resposta: any) => {
+        let nomeImagem = resposta.key;
+            firebase.storage().ref()
+              .child(`imagens/${nomeImagem}`)
+              .put(publicacao.imagem)
+              .on(firebase.storage.TaskEvent.STATE_CHANGED,
+                // Upload Progress
+                (snapshot: any) => {
+                  this.progresso.status = 'andamento';
+                  this.progresso.estado = snapshot;
+                  // console.log('Snapshot capturado com sucesso', snapshot);
+                },
+                (error) => {
+                  this.progresso.status = 'erro';
+                 // console.log(error);
+                },
+                () => {
+                  this.progresso.status = 'concluido';
+                 // console.log('Upload Completo');
+                }
+               );
+      });
 }
 }
