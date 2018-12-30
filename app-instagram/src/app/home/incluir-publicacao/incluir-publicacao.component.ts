@@ -1,6 +1,6 @@
 import { Progresso } from './../../progresso.service';
 import { FormGroup, FormControl } from '@angular/forms';
-import { Component, OnInit } from '@angular/core';
+import { Component, OnInit, Output, EventEmitter } from '@angular/core';
 
 import { Bd } from './../../bd.service';
 import * as firebase from 'firebase';
@@ -8,12 +8,15 @@ import { Observable, Subject } from 'rxjs';
 import 'rxjs/add/observable/interval';
 import 'rxjs/add/operator/takeUntil';
 
+
 @Component({
   selector: 'app-incluir-publicacao',
   templateUrl: './incluir-publicacao.component.html',
   styleUrls: ['./incluir-publicacao.component.css']
 })
 export class IncluirPublicacaoComponent implements OnInit {
+
+  @Output() public atualizarTimeLine: EventEmitter<any> = new EventEmitter<any>();
 
   public email: string;
   private imagem: any;
@@ -60,6 +63,8 @@ export class IncluirPublicacaoComponent implements OnInit {
 
         if (this.progresso.status === 'concluido') {
           this.progressoPublicacao = 'concluido';
+          // emitir evento do componente parent (home)
+          this.atualizarTimeLine.emit();
           continua.next(false);
         }
       });
