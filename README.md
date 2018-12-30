@@ -3,7 +3,7 @@
 Projeto desenvolvido junto no Curso de Desenvolvimento WEB com ES6, TypeScript e Angular.
 
 A proposta de desenvolvimento contempla o uso do framework Angular, utilizado aqui em sua versão 6.0 <br/>
-juntamente com Firebase como banco de dados.
+juntamente com Firebase como banco de dados, simulando o Instagram no cenário web.
 
  Instalação:
  ------
