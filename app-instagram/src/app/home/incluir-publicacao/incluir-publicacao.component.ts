@@ -4,6 +4,9 @@ import { Component, OnInit } from '@angular/core';
 
 import { Bd } from './../../bd.service';
 import * as firebase from 'firebase';
+import { Observable, Subject } from 'rxjs';
+import 'rxjs/add/observable/interval';
+import 'rxjs/add/operator/takeUntil';
 
 @Component({
   selector: 'app-incluir-publicacao',
@@ -14,6 +17,9 @@ export class IncluirPublicacaoComponent implements OnInit {
 
   public email: string;
   private imagem: any;
+
+  public progressoPublicacao = 'pendente';
+  public porcentagemUpload: number;
 
   public formulario: FormGroup = new FormGroup({
     'titulo':  new FormControl(null)
@@ -36,8 +42,27 @@ export class IncluirPublicacaoComponent implements OnInit {
       titulo: this.formulario.value.titulo,
       imagem: this.imagem[0]
     });
-    console.log(this.progresso.status);
-    console.log(this.progresso.estado);
+
+    const acompanhamentoUpload = Observable.interval(1500);
+
+    const continua = new Subject();
+
+    continua.next(true);
+
+    acompanhamentoUpload
+      .takeUntil(continua)
+      .subscribe(() => {
+        // console.log(this.progresso.status)
+        // console.log(this.progresso.estado)
+        this.progressoPublicacao = 'andamento';
+
+        this.porcentagemUpload = Math.round(( this.progresso.estado.bytesTransferred / this.progresso.estado.totalBytes ) * 100);
+
+        if (this.progresso.status === 'concluido') {
+          this.progressoPublicacao = 'concluido';
+          continua.next(false);
+        }
+      });
   }
 
   public preparaImagemUpload( evento: Event ): void {

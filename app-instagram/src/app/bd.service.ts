@@ -21,14 +21,14 @@ export class Bd {
         (snapshot: any) => {
           this.progresso.status = 'andamento';
           this.progresso.estado = snapshot;
-          console.log('Snapshot capturado com sucesso', snapshot);
+          // console.log('Snapshot capturado com sucesso', snapshot);
         },
         (error) => {
           this.progresso.status = 'erro';
          // console.log(error);
         },
         () => {
-          this.progresso.status = 'concluído';
+          this.progresso.status = 'concluido';
          // console.log('Upload Completo');
         }
 
