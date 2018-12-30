@@ -1,4 +1,4 @@
-# Instagram 
+# Instagram :camera:
 
 Projeto desenvolvido junto no Curso de Desenvolvimento WEB com ES6, TypeScript e Angular.
 
