@@ -1,6 +1,7 @@
 import * as firebase from 'firebase';
 import { Progresso } from './progresso.service';
 import { Injectable } from '@angular/core';
+import { once } from 'cluster';
 
 @Injectable()
 export class Bd {
@@ -39,32 +40,44 @@ export class Bd {
                );
       });
 }
-  public consultaPublicacoes(emailUsuario: string): any {
-    firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
-      .once('value')
-      .then((snapshot: any) => {
-        console.log(snapshot.val());
+  public consultaPublicacoes(emailUsuario: string): Promise<any> {
 
-        const publicacoes = [];
+    return new Promise( (resolve, reject) => {
 
-        snapshot.forEach( (childSnapshot: any) => {
+      firebase.database().ref(`publicacoes/${btoa(emailUsuario)}`)
+        .once('value')
+        .then((snapshot: any) => {
+          console.log(snapshot.val());
 
-          const publicacao  = childSnapshot.val();
+          const publicacoes = [];
 
-          // consultar url da imagem
-          firebase.storage().ref()
-            .child(`imagens/${childSnapshot.key}`)
-            .getDownloadURL()
-            .then( (url: string) => {
-              console.log(url);
+          snapshot.forEach( (childSnapshot: any) => {
+
+            const publicacao  = childSnapshot.val();
+
+            // consultar url da imagem
+            firebase.storage().ref()
+              .child(`imagens/${childSnapshot.key}`)
+              .getDownloadURL()
+              .then( (url: string) => {
+                console.log(url);
 
                 publicacao.url_imagem = url;
 
-                publicacoes.push(publicacao);
-            });
+                  // consultar nome de usuário
+                  firebase.database().ref(`usuario_detalhe/${btoa(emailUsuario)}`)
+                    .once('value')
+                    .then((snapshote) => {
+                      publicacao.nome_usuario = snapshote.val().nome_usuario;
+
+                      publicacoes.push(publicacao);
+                    });
+              });
+          });
+          resolve(publicacoes);
         });
-        console.log(publicacoes);
-      });
+    });
+
   }
 
 
