@@ -22,4 +22,4 @@ juntamente com Firebase como banco de dados, simulando o Instagram no cenário w
  Resultado:
  ------ 
  
- 
+ ![instagram-app](https://user-images.githubusercontent.com/21059225/50549235-86c4de80-0c40-11e9-9b9e-0b99651b46c9.gif)
